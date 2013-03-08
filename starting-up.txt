@@ -1,0 +1,63 @@
+DIR=~/diplomaMasters/clojure-support-on-android/neko-test
+
+# 1) installing android sdk
+
+# 2) getting neko
+cd $DIR
+git clone https://github.com/sattvik/neko.git
+
+# 3) adding clojure.jar to neko folder
+mkdir -p $DIR/neko/libs/
+cp $DIR/clojure-nosrc-1.2.0.jar $DIR/neko/libs/clojure.jar 
+
+# 4) creating a new android project 
+android create project -p $DIR/neko-example -t android-11 -k com.example.cool_clojure_app -a HelloActivity
+
+# 5) adding neko as a dependency, adding relative path
+cd $DIR/neko-example
+android update project -p . -l ../neko/
+
+# 6) adding into build.xml( before the line with <import file="${sdk.dir}/tools/ant/build.xml" />) of the project the following:
+#     <!-- version-tag: custom -->
+#	<import file="/home/fallen/diplomaMasters/clojure-support-on-android/neko-test/neko/build-support/clojure.xml"/>
+
+# 7) getting rid of java files
+rm -rf $DIR/neko-example/src/com
+
+# 8) adding clojure source file
+mkdir -p $DIR/neko-example/src/clojure/com/example/hello_clojure/
+echo "
+(ns com.example.hello_clojure.HelloActivity
+  (:gen-class :main false
+              :extends android.app.Activity
+              :exposes-methods {onCreate superOnCreate})
+  (:import [com.example.hello_clojure R$layout]))
+
+(defn -onCreate
+  [this bundle]
+  (doto this
+    (.superOnCreate bundle)
+    (.setContentView R$layout/main)))
+" > $DIR/neko-example/src/clojure/com/example/hello_clojure/HelloActivity.clj
+
+# 9) build and run
+cd $DIR/neko-example
+ant debug install
+
+--------------------------------------------------------------------------------
+
+# my additional step:
+cd $DIR/neko
+android update project --path . --target android-11        #?  --subprojects 
+
+# adding clojure again?
+cp $DIR/clojure-nosrc-1.2.0.jar $DIR/neko/libs/clojure.jar
+
+# adding ROOT_SDK=ANDROID_SDK=.../bundle/sdk
+
+# since SDK 20 has changed I should do:
+In build_support/clojure.xml I had to change "android.target.classpath" to "project.target.class.path" and "project.libraries.jars" to "project.all.jars.path".
+
+# in source files change the following:
+(:import [com.example.hello_clojure R$layout]) ->
+(:import [com.example.cool_clojure_app R$layout])
