@@ -12,6 +12,6 @@ public class HelloActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // set the layout.
-        setContentView(R.layout.main);
+        // setContentView(R.layout.main);
     }
 }
