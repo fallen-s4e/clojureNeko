@@ -8,5 +8,6 @@
 # application.  It is library and test projects that really need this property.
 
 clojure.jar=/home/fallen/diplomaMasters/clojure-support-on-android/neko-test/clojure-nosrc-1.2.0.jar
+clojure.warn.reflection=true
 
 # vim:set ft=jproperties:
