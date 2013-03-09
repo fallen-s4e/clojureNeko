@@ -64,3 +64,6 @@ In build_support/clojure.xml I had to change "android.target.classpath" to "proj
 
 build and deplo with:
 ant debug && adb install -r bin/HelloActivity-debug.apk 
+
+add to neko/build-support/clojure.properties.example:
+clojure.warn.reflection=true
