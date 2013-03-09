@@ -61,3 +61,6 @@ In build_support/clojure.xml I had to change "android.target.classpath" to "proj
 # in source files change the following:
 (:import [com.example.hello_clojure R$layout]) ->
 (:import [com.example.cool_clojure_app R$layout])
+
+build and deplo with:
+ant debug && adb install -r bin/HelloActivity-debug.apk 
