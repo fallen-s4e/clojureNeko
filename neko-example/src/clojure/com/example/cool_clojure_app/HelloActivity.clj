@@ -5,6 +5,7 @@
               :extends android.app.Activity
               :exposes-methods {onCreate superOnCreate}))
 
+
 (defn -onCreate
   [this bundle]
 ;  (print (read-string "(+ 2 2)"))
