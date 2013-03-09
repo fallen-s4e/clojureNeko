@@ -29,19 +29,20 @@
 ;; initializing
 (defn init-buttons[this]
   (set-on-click (get-run-button this) (fn[_]
-                                        (let [v (.toString (.getText (get-input-edit-text this)))]
-                                          (set-result this (str v "!")))))
-  (set-on-click (get-clear-button this) (fn[_]
-                                          (set-result this "")))
+                                        (let [input (read-string (.toString (.getText (get-input-edit-text this))))
+                                              fun @(resolve (first input)) ;; first elem in a list must be a symbol
+                                              args (rest input)]
+                                          (set-result this (str (apply fun args))))))
   (set-on-click (get-clear-button this) (fn[_]
                                           (set-result this ""))))
 
 (defn -onCreate
   [this bundle]
-  (print (read-string "(+ 2 2)"))
-  (apply map [inc [1 2 3]])
+  ;; (print (read-string "(+ 2 2)"))
+  ;; (apply map [inc [1 2 3]])
   (doto this
     (.superOnCreate bundle)
     (.setContentView R$layout/main))
-  (init-buttons this))
+  (init-buttons this)
+  )
 ;;  (. (.findViewById this R$id/resultView) setText "!!!"))
