@@ -1,6 +1,7 @@
 (ns kz.kaznu.activities.HelloActivity
   (:import [kz.kaznu.activities R$layout])
   (:import [kz.kaznu.activities R$id])
+  (:require neko.compilation)
   (:use clojure.core)
   (:use kz.kaznu.base.client)
   (:use kz.kaznu.base.serialization)
@@ -28,18 +29,11 @@
                            []
                          (onClick [#^android.view.View view] (fun view)))))
 
-(defn interprete
-  "expr is a parsed expression and the function returns evaluated expression. Cut version of eval"
-  [ expr ]
-  (let [fun @(resolve (first input)) ;; first elem in a list must be a symbol
-        args (rest input)]
-    (apply fun args)))
-
 ;; initializing
 (defn init-buttons[this]
   (set-on-click (get-run-button this) (fn[_]
                                         (let [input (read-string (.toString (.getText (get-input-edit-text this))))]
-                                          (set-result this (str (interprete input)))))
+                                          (set-result this (str (eval input))))))
   (set-on-click (get-clear-button this) (fn[_]
                                           (set-result this ""))))
 
@@ -50,6 +44,8 @@
   (doto this
     (.superOnCreate bundle)
     (.setContentView R$layout/main))
-  (init-buttons this))
+  (init-buttons this)
+  (neko.compilation/init this) ;; allowing dynamic compilation
+  )
 
 ;; API
