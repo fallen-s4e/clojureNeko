@@ -12,12 +12,15 @@
 
 (def max-result-len 150)
 
-;; components accessors
-(defn get-run-button ^android.widget.Button [this]
-  (.findViewById this R$id/runButton))
+;; components accessing
 
-(defn get-clear-button ^android.widget.Button [this]
-  (.findViewById this R$id/clearButton))
+(defn init-components[ this ]
+  (def ui-run-button      (.findViewById this R$id/runButton))
+  (def ui-clear-button    (.findViewById this R$id/clearButton))
+  (def ui-input-edit-text (.findViewById this R$id/inputEditText))
+  (def ui-input-address   (.findViewById this R$id/inputAddress)))
+
+;; utility methods
 
 (defn set-result [this string-value]
   (.setText (.findViewById this R$id/resultView)
@@ -25,16 +28,13 @@
               (.substring string-value 0 max-result-len)
               string-value)))
 
-(defn get-input-edit-text ^android.widget.TextView [this]
-  (.findViewById this R$id/inputEditText))
-
-;; utility methods
-
 (defn set-on-click[button fun]
   (.setOnClickListener button
                        (proxy [ android.view.View$OnClickListener ]
                            []
                          (onClick [#^android.view.View view] (fun view)))))
+
+;; eval methods
 
 (defn eval-new-thread
   "evaluates expressions in new thread, catching all the errors being in this namespace kz.kaznu.activities.HelloActivity"
@@ -44,20 +44,30 @@
        ((kz.kaznu.base.utils/catch-all apply)
         eval exprs))))
 
+(defn eval-remote
+  "evaluates expressions in new thread, catching all the errors being in this namespace kz.kaznu.activities.HelloActivity"
+  [ expr input-addr ]
+  @(future
+     ((kz.kaznu.base.utils/catch-all kz.kaznu.base.client/runr)
+      input-addr expr)))
+
 ;; initializing
-(defn init-buttons[this]
-  (set-on-click (get-run-button this) (kz.kaznu.base.utils/catch-all
-                                       (fn[_]
-                                         (let [input (read-string (.toString (.getText (get-input-edit-text this))))]
-                                           ;; (future (set-result this (str (eval input)))))))
-                                           (try
-                                             (set-result this "waiting ...")
-                                             (set-result this (str (eval-new-thread input)))
-                                             (catch Exception ex
-                                               (set-result this (str "error occured:" ex))))))))
-  (set-on-click (get-clear-button this) (fn[_]
-                                          (.setText (get-input-edit-text this) "")
-                                          (set-result this ""))))
+
+(defn init-buttons-actions[this]
+  (set-on-click ui-run-button (kz.kaznu.base.utils/catch-all
+                               (fn[_]
+                                 (let [input      (read-string (.toString (.getText ui-input-edit-text)))
+                                       input-addr (.toString (.getText ui-input-address))]
+                                   (try
+                                     (set-result this "waiting ...")
+                                     (if (or (nil? input-addr) (= input-addr ""))
+                                       (set-result this (str (eval-new-thread input)))
+                                       (set-result this (str (eval-remote input input-addr))))
+                                     (catch Exception ex
+                                       (set-result this (str "error occured:" ex))))))))
+  (set-on-click ui-clear-button (fn[_]
+                                  (.setText ui-input-edit-text "")
+                                  (set-result this ""))))
 
 ;; overridings
 (defn -onCreate
@@ -65,8 +75,7 @@
   (doto this
     (.superOnCreate bundle)
     (.setContentView R$layout/main))
-  (init-buttons this)
+  (init-components this)
+  (init-buttons-actions this)
   (neko.compilation/init this) ;; allowing dynamic compilation
   )
-
-;; API
