@@ -29,11 +29,15 @@
                            []
                          (onClick [#^android.view.View view] (fun view)))))
 
+(defn eval-new-thread[ & exprs ]
+  @(future (apply eval exprs)))
+
 ;; initializing
 (defn init-buttons[this]
   (set-on-click (get-run-button this) (fn[_]
                                         (let [input (read-string (.toString (.getText (get-input-edit-text this))))]
-                                          (set-result this (str (eval input))))))
+                                          ;; (future (set-result this (str (eval input)))))))
+                                          (set-result this (str (eval-new-thread input))))))
   (set-on-click (get-clear-button this) (fn[_]
                                           (set-result this ""))))
 
