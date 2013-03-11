@@ -1,7 +1,9 @@
-(ns com.example.cool_clojure_app.HelloActivity
-  (:import [com.example.cool_clojure_app R$layout])
-  (:import [com.example.cool_clojure_app R$id])
+(ns kz.kaznu.activities.HelloActivity
+  (:import [kz.kaznu.activities R$layout])
+  (:import [kz.kaznu.activities R$id])
   (:use clojure.core)
+  (:use kz.kaznu.base.client)
+  (:use kz.kaznu.base.serialization)
   (:gen-class :main false
               :extends android.app.Activity
               :exposes-methods {onCreate superOnCreate}))
@@ -26,23 +28,28 @@
                            []
                          (onClick [#^android.view.View view] (fun view)))))
 
+(defn interprete
+  "expr is a parsed expression and the function returns evaluated expression. Cut version of eval"
+  [ expr ]
+  (let [fun @(resolve (first input)) ;; first elem in a list must be a symbol
+        args (rest input)]
+    (apply fun args)))
+
 ;; initializing
 (defn init-buttons[this]
   (set-on-click (get-run-button this) (fn[_]
-                                        (let [input (read-string (.toString (.getText (get-input-edit-text this))))
-                                              fun @(resolve (first input)) ;; first elem in a list must be a symbol
-                                              args (rest input)]
-                                          (set-result this (str (apply fun args))))))
+                                        (let [input (read-string (.toString (.getText (get-input-edit-text this))))]
+                                          (set-result this (str (interprete input)))))
   (set-on-click (get-clear-button this) (fn[_]
                                           (set-result this ""))))
 
+
+;; overridings
 (defn -onCreate
   [this bundle]
-  ;; (print (read-string "(+ 2 2)"))
-  ;; (apply map [inc [1 2 3]])
   (doto this
     (.superOnCreate bundle)
     (.setContentView R$layout/main))
-  (init-buttons this)
-  )
-;;  (. (.findViewById this R$id/resultView) setText "!!!"))
+  (init-buttons this))
+
+;; API
