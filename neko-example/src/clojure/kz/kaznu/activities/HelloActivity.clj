@@ -29,8 +29,13 @@
                            []
                          (onClick [#^android.view.View view] (fun view)))))
 
-(defn eval-new-thread[ & exprs ]
-  @(future (apply eval exprs)))
+(defn eval-new-thread
+  "evaluates expressions in new thread, catching all the errors being in this namespace kz.kaznu.activities.HelloActivity"
+  [ & exprs ]
+  @(future
+     (binding [*ns* (find-ns 'kz.kaznu.activities.HelloActivity)]
+       ((kz.kaznu.base.client/catch-all apply)
+        eval exprs))))
 
 ;; initializing
 (defn init-buttons[this]
@@ -39,6 +44,7 @@
                                           ;; (future (set-result this (str (eval input)))))))
                                           (set-result this (str (eval-new-thread input))))))
   (set-on-click (get-clear-button this) (fn[_]
+                                          (.setText (get-input-edit-text this) "")
                                           (set-result this ""))))
 
 
