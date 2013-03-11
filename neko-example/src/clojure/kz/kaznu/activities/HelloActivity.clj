@@ -9,6 +9,8 @@
               :extends android.app.Activity
               :exposes-methods {onCreate superOnCreate}))
 
+(def max-result-len 150)
+
 ;; components accessors
 (defn get-run-button ^android.widget.Button [this]
   (.findViewById this R$id/runButton))
@@ -17,7 +19,10 @@
   (.findViewById this R$id/clearButton))
 
 (defn set-result [this string-value]
-  (.setText (.findViewById this R$id/resultView) string-value))
+  (.setText (.findViewById this R$id/resultView)
+            (if (> (.length string-value) max-result-len)
+              (.substring string-value 0 max-result-len)
+              string-value)))
 
 (defn get-input-edit-text ^android.widget.TextView [this]
   (.findViewById this R$id/inputEditText))
@@ -39,14 +44,18 @@
 
 ;; initializing
 (defn init-buttons[this]
-  (set-on-click (get-run-button this) (fn[_]
-                                        (let [input (read-string (.toString (.getText (get-input-edit-text this))))]
-                                          ;; (future (set-result this (str (eval input)))))))
-                                          (set-result this (str (eval-new-thread input))))))
+  (set-on-click (get-run-button this) (kz.kaznu.base.client/catch-all
+                                       (fn[_]
+                                         (let [input (read-string (.toString (.getText (get-input-edit-text this))))]
+                                           ;; (future (set-result this (str (eval input)))))))
+                                           (try
+                                             (set-result this "waiting ...")
+                                             (set-result this (str (eval-new-thread input)))
+                                             (catch Exception ex
+                                               (set-result this (str "error occured:" ex))))))))
   (set-on-click (get-clear-button this) (fn[_]
                                           (.setText (get-input-edit-text this) "")
                                           (set-result this ""))))
-
 
 ;; overridings
 (defn -onCreate
