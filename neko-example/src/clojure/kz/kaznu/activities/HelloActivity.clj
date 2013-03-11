@@ -4,6 +4,7 @@
   (:require neko.compilation)
   (:use clojure.core)
   (:use kz.kaznu.base.client)
+  (:use kz.kaznu.base.utils)
   (:use kz.kaznu.base.serialization)
   (:gen-class :main false
               :extends android.app.Activity
@@ -28,6 +29,7 @@
   (.findViewById this R$id/inputEditText))
 
 ;; utility methods
+
 (defn set-on-click[button fun]
   (.setOnClickListener button
                        (proxy [ android.view.View$OnClickListener ]
@@ -39,12 +41,12 @@
   [ & exprs ]
   @(future
      (binding [*ns* (find-ns 'kz.kaznu.activities.HelloActivity)]
-       ((kz.kaznu.base.client/catch-all apply)
+       ((kz.kaznu.base.utils/catch-all apply)
         eval exprs))))
 
 ;; initializing
 (defn init-buttons[this]
-  (set-on-click (get-run-button this) (kz.kaznu.base.client/catch-all
+  (set-on-click (get-run-button this) (kz.kaznu.base.utils/catch-all
                                        (fn[_]
                                          (let [input (read-string (.toString (.getText (get-input-edit-text this))))]
                                            ;; (future (set-result this (str (eval input)))))))
