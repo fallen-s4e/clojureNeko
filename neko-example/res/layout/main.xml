@@ -1,4 +1,5 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,32 +9,58 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <EditText
-        android:id="@+id/inputEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:text="" />
-    
-    <TextView
-        android:id="@+id/resultView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/inputEditText"
-        android:text="@string/hello_world" />
-    
-    <Button
-        android:id="@+id/runButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/resultView"
-        android:text="run" />
+  <!-- address for remote evaluation -->  
+  <TextView
+	  android:id="@+id/addressTitle"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:text="@string/address" />
 
-    <Button
-        android:id="@+id/clearButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/runButton"
-        android:text="clear" />
+  <EditText
+	  android:id="@+id/inputAddress"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_below="@+id/addressTitle"
+	  android:ems="10"
+	  android:text="" />
+
+  <!-- user's input -->  
+  <TextView
+	  android:id="@+id/inputTitle"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_below="@+id/inputAddress"
+	  android:text="@string/input" />
+
+  <EditText
+	  android:id="@+id/inputEditText"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_below="@+id/inputTitle"
+	  android:ems="10"
+	  android:text="" />
+
+  <!-- user's output -->  
+  <TextView
+	  android:id="@+id/resultView"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_below="@+id/inputEditText"
+	  android:text="" />
+
+  <!-- buttons -->  
+  <Button
+	  android:id="@+id/runButton"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_below="@+id/resultView"
+	  android:text="run" />
+
+  <Button
+	  android:id="@+id/clearButton"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_below="@+id/runButton"
+	  android:text="clear" />
 
 </RelativeLayout>
