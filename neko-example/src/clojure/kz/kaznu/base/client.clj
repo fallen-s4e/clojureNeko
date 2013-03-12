@@ -7,10 +7,12 @@
   (:gen-class)
   (:require kz.kaznu.base.serialization))
 
-(defn runr[addr expr]
+(defn runr
+  "address must be like \"127.0.0.1:3000\" and expr is an expr to evaluate"
+  [addr expr]
   (let [expr-str     (URLEncoder/encode (kz.kaznu.base.serialization/seri expr) "UTF-8")
         encoded-dots (clojure.string/replace expr-str "." "%2E")
-        request-str  (str addr "/repl/" encoded-dots)]
+        request-str  (str "http://" addr "/repl/" encoded-dots)]
     (read-string (request-get request-str))))
 
 (defn prompt-read[ x ]
@@ -27,17 +29,17 @@
           (recur (prompt-read prompt))))))
 
 (defn replr
-  "starts a remote repl that works remotely on addr  which has default value = http://localhost:3000"
+  "starts a remote repl that works remotely on addr  which has default value = localhost:3000"
   [& [addr]]
   (println "Remote read eval print loop(remote REPL)")
-  (repl-gen (catch-all #(runr (or addr "http://localhost:3000") %))
+  (repl-gen (catch-all #(runr (or addr "localhost:3000") %))
             "Remote"))
 
 (defn replr-local
   "starts a remote repl that works remotely on localhost which has default value = 3000"
   [& [port]]
   (println "Remote read eval print loop(remote REPL on localhost)")
-  (repl-gen (catch-all #(runr (str "http://localhost:"
+  (repl-gen (catch-all #(runr (str "localhost:"
                                    (or port 3000)) %))
             "RemoteLH"))
 

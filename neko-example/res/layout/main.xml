@@ -22,7 +22,7 @@
 	  android:layout_height="wrap_content"
 	  android:layout_below="@+id/addressTitle"
 	  android:ems="10"
-	  android:text="http://192.168.0.2:3000" />
+	  android:text="192.168.0.2:3000" />
 
   <!-- user's input -->  
   <TextView
