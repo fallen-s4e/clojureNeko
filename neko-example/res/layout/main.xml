@@ -48,12 +48,29 @@
 	  android:layout_below="@+id/inputEditText"
 	  android:text="" />
 
+  <!-- checkboxes -->
+  <CheckBox
+	  android:id="@+id/compilerCheckbox"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:text="Compiler"
+	  android:layout_below="@+id/resultView"
+	  />
+
+  <CheckBox
+	  android:id="@+id/remoteCheckbox"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:text="Remote"
+	  android:layout_below="@+id/compilerCheckbox"
+	  />
+
   <!-- buttons -->  
   <Button
 	  android:id="@+id/runButton"
 	  android:layout_width="wrap_content"
 	  android:layout_height="wrap_content"
-	  android:layout_below="@+id/resultView"
+	  android:layout_below="@+id/remoteCheckbox"
 	  android:text="run" />
 
   <Button
